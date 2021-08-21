@@ -1,11 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags('healthz')
-@Controller('healthz')
-export class HealthcheckController {
+@ApiTags('healthy')
+@Controller('healthy')
+export class HealthCheckController {
   @Get()
-  public async healthz() {
+  healthy(): unknown {
     return { message: 'OK' };
   }
 }

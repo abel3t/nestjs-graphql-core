@@ -5,13 +5,13 @@ import { CoreModule } from './core/core.module';
 import GraphQLModule from './graphql/graphql.module';
 import { LoaderProvider } from './graphql/loader/loader.prodiver';
 import { GraphQLUploadModule } from './graphql/upload/upload.module';
-import { HealthcheckController } from './healthcheck/healthcheck.controller';
+import { HealthCheckController } from './healthcheck/healthcheck.controller';
 import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [LoggerModule, GraphQLModule, GraphQLUploadModule, CoreModule],
   providers: [LoaderProvider],
-  controllers: [HealthcheckController]
+  controllers: [HealthCheckController]
 })
 export class AppModule implements NestModule {
   public configure(consumer: MiddlewareConsumer): void | MiddlewareConsumer {
