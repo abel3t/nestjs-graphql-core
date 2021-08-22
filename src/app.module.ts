@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { CoreModule } from './core/core.module';
@@ -7,9 +8,21 @@ import { LoaderProvider } from './graphql/loader/loader.prodiver';
 import { GraphQLUploadModule } from './graphql/upload/upload.module';
 import { HealthCheckController } from './healthcheck/healthcheck.controller';
 import { LoggerModule } from './logger/logger.module';
+import { SharedModule } from './shared/shared.module';
+import { configuration } from './config';
 
 @Module({
-  imports: [LoggerModule, GraphQLModule, GraphQLUploadModule, CoreModule],
+  imports: [
+    LoggerModule,
+    GraphQLModule,
+    GraphQLUploadModule,
+    CoreModule,
+    SharedModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration]
+    })
+  ],
   providers: [LoaderProvider],
   controllers: [HealthCheckController]
 })
