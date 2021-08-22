@@ -1,33 +1,34 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-
-import config from 'config';
+import { ConfigService } from '@nestjs/config';
 import { NextFunction, Request, Response } from 'express';
 
+import { LoggerService } from '../../logger/logger.service';
 import {
   getIp,
   getMethod,
   getOrigin,
   getReferrer,
   getUrl,
-  getUserAgent,
+  getUserAgent
 } from '../helpers/req.helper';
-
-import { LoggerService } from '../../logger/logger.service';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  private readonly settings: ILogSettings = config.get('LOGGER_SETTINGS');
+  constructor(
+    private readonly logger: LoggerService,
+    private readonly configService: ConfigService
+  ) {}
 
-  constructor(private readonly logger: LoggerService) {}
+  public use(req: Request, res: Response, next: NextFunction): unknown {
+    const settings: ILogSettings = this.configService.get('LoggerSettings');
 
-  public use(req: Request, res: Response, next: NextFunction) {
     const operation: string =
       req.body && req.body.operationName ? req.body.operationName : '';
     const action: string = getUrl(req).split('/')[1];
 
     if (
-      this.settings.silence.includes(action) ||
-      this.settings.silence.includes(operation)
+      settings.silence.includes(action) ||
+      settings.silence.includes(operation)
     ) {
       return next();
     }
@@ -53,7 +54,7 @@ export class LoggerMiddleware implements NestMiddleware {
         remoteAddress: getIp(req),
         statusCode: res.statusCode,
         statusMessage: res.statusMessage,
-        requestRunTime: `${(diff[0] * 1e3 + diff[1] * 1e-6).toFixed(4)} ms`,
+        requestRunTime: `${(diff[0] * 1e3 + diff[1] * 1e-6).toFixed(4)} ms`
       };
 
       this.logMethodByStatus(message, '', res.statusCode);

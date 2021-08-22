@@ -1,26 +1,29 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { stitchSchemas } from '@graphql-tools/stitch';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { GqlModuleOptions, GqlOptionsFactory } from '@nestjs/graphql';
-import config from 'config';
 import { Request } from 'express';
 import { GraphQLError, GraphQLSchema } from 'graphql';
 
 import { corsOptionsDelegate } from '../cors.option';
+import { User } from '../shared/entities/user.entity';
 import { StitchingService } from './stitching/stitching.service';
 import { GraphQLUpload } from './upload/upload.scalar';
-import { User } from '../shared/entities/user.entity';
-
-const appSettings = config.get<IAppSettings>('APP_SETTINGS');
-const graphqlSettings = config.get<IGraphqlSettings>('GRAPHQL_SETTINGS');
 
 @Injectable()
 export class GraphqlOptions implements GqlOptionsFactory {
-  constructor(private readonly stitchingService: StitchingService) {}
+  constructor(
+    private readonly stitchingService: StitchingService,
+    private configService: ConfigService
+  ) {}
 
   public createGqlOptions(): Promise<GqlModuleOptions> | GqlModuleOptions {
+    const appSettings = this.configService.get<IAppSettings>('AppSettings');
+    const graphQLSettings =
+      this.configService.get<IAppSettings>('GraphQLSettings');
     return {
-      ...graphqlSettings,
+      ...graphQLSettings,
       autoSchemaFile: __dirname + '/schema.graphql',
       formatError: (err: GraphQLError) => err,
       context: ({ req }: { req: Request & { user?: User } }) => ({
@@ -48,11 +51,9 @@ export class GraphqlOptions implements GqlOptionsFactory {
           ...(await this.stitchingService.schemas()).filter(Boolean)
         ];
 
-        const full_schema = stitchSchemas({
+        return stitchSchemas({
           subschemas: schemas
         });
-
-        return full_schema;
       }
     };
   }

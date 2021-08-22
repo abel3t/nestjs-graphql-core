@@ -19,10 +19,6 @@ interface IJwtSettings {
 
 interface IAppSettings {
   readonly port: number;
-  readonly socketPort: number;
-  readonly socketPingInterval: number;
-  readonly socketPinkTimeout: number;
-  readonly socketIoPath: string;
   readonly bodyLimit: string;
   readonly bodyParameterLimit: number;
 }
@@ -35,7 +31,19 @@ interface ICorsSettings {
   readonly allowedCredentials: boolean;
 }
 
-interface IGraphqlSettings {
+interface IAwsSettings {
+  readonly accessKeyId: string;
+  readonly secretAccessKey: string;
+  readonly region: string;
+}
+
+interface ICognitoSettings {
+  region: string;
+  userPoolId: string;
+  appClientId: string;
+}
+
+interface IGraphQlSettings {
   readonly playground: boolean;
   readonly debug: boolean;
   readonly introspection: boolean;

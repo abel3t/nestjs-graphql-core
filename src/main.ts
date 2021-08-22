@@ -1,22 +1,25 @@
 import { graphqlUploadExpress } from '@apollographql/graphql-upload-8-fork';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json, urlencoded } from 'body-parser';
-import config from 'config';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 
 import { AppModule } from './app.module';
 import { corsOptionsDelegate } from './cors.option';
-
-const appSettings = config.get<IAppSettings>('APP_SETTINGS');
+import { LoggerService } from './logger/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(), {
-    bodyParser: true
+    bodyParser: true,
+    bufferLogs: true
   });
+
+  const appSettings = app.get(ConfigService).get<IAppSettings>('AppSettings');
+  console.log(appSettings);
 
   app.use(json({ limit: appSettings.bodyLimit }));
   app.use(
@@ -32,6 +35,7 @@ async function bootstrap() {
     })
   );
   app.use(cookieParser());
+  app.useLogger(app.get(LoggerService));
   app.enableCors(corsOptionsDelegate);
 
   app.useGlobalPipes(
