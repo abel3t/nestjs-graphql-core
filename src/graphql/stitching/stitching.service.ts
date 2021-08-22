@@ -1,23 +1,24 @@
 import { AsyncExecutor } from '@graphql-tools/utils';
 import { introspectSchema, wrapSchema } from '@graphql-tools/wrap';
 import { Injectable } from '@nestjs/common';
-
-import config from 'config';
+import { ConfigService } from '@nestjs/config';
 import { fetch } from 'cross-fetch';
 import { GraphQLSchema, print } from 'graphql';
 
 import { getForwardedIp, getIp } from '../../common/helpers/req.helper';
 import { LoggerService } from '../../logger/logger.service';
 
-const api_urls = config.get<string[]>('GRAPHQL_API_URLS');
-
 @Injectable()
 export class StitchingService {
-  constructor(private readonly logger: LoggerService) {}
+  constructor(
+    private readonly logger: LoggerService,
+    private configService: ConfigService
+  ) {}
 
   public async schemas(): Promise<Array<GraphQLSchema | null>> {
+    const apiUrls = this.configService.get<string[]>('GraphQL_URLs');
     return Promise.all(
-      Object.values(api_urls).map((url) => this.getApiSchema(url)),
+      Object.values(apiUrls).map((url) => this.getApiSchema(url))
     );
   }
 
@@ -28,7 +29,7 @@ export class StitchingService {
       const executor: AsyncExecutor = async ({
         document,
         variables,
-        context,
+        context
       }) => {
         this.logger.info(`Request to ${api_link}`);
 
@@ -50,24 +51,21 @@ export class StitchingService {
             'Content-Type': 'application/json; charset=utf-8',
             currentUser,
             remoteAddress,
-            forwardedAddress,
+            forwardedAddress
           },
-          body: JSON.stringify({ query, variables }),
+          body: JSON.stringify({ query, variables })
         });
 
         return fetch_result.json();
       };
 
-      const schema = wrapSchema({
+      return wrapSchema({
         schema: await introspectSchema(executor),
-        executor,
+        executor
       });
-
-      return schema;
     } catch (error) {
       this.logger.error(error);
-
-      return null;
+      return;
     }
   }
 }
