@@ -10,16 +10,13 @@ import helmet from 'helmet';
 
 import { AppModule } from './app.module';
 import { corsOptionsDelegate } from './cors.option';
-import { LoggerService } from './logger/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(), {
-    bodyParser: true,
-    bufferLogs: true
+    bodyParser: true
   });
 
   const appSettings = app.get(ConfigService).get<IAppSettings>('AppSettings');
-  console.log(appSettings);
 
   app.use(json({ limit: appSettings.bodyLimit }));
   app.use(
@@ -35,7 +32,6 @@ async function bootstrap() {
     })
   );
   app.use(cookieParser());
-  app.useLogger(app.get(LoggerService));
   app.enableCors(corsOptionsDelegate);
 
   app.useGlobalPipes(

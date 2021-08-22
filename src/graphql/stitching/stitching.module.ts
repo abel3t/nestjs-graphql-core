@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { LoggerService } from '../../logger/logger.service';
-
 import { StitchingService } from './stitching.service';
 
 @Module({
@@ -9,9 +8,9 @@ import { StitchingService } from './stitching.service';
     StitchingService,
     {
       provide: LoggerService,
-      useValue: new LoggerService('StitchingModule'),
-    },
+      useValue: new LoggerService('StitchingModule')
+    }
   ],
-  exports: [StitchingService],
+  exports: [StitchingService]
 })
 export class StitchingModule {}
