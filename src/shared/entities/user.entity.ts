@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { getUnixTime } from 'date-fns';
 import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 
@@ -12,6 +12,7 @@ interface IUser extends IBaseEntity {
 }
 
 @ObjectType()
+@InputType('user')
 @Entity('User')
 export class User extends BaseEntity {
   constructor(props?: IUser) {

@@ -55,7 +55,7 @@
     "hasha": "^5.2.2",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
-    "mongodb": "^4.1.0",
+    "mongodb": "^3.6.9",
     "nestjs-typeorm-paginate": "^2.6.2",
     "query-string": "^7.0.1",
     "reflect-metadata": "^0.1.13",
