@@ -30,7 +30,7 @@ const arrayToGql = (array: unknown[]): string => {
 };
 
 const isEnumCheck = (value: string): boolean => {
-  return enumKeys.indexOf(value) !== -1;
+  return enumKeys.includes(value);
 };
 
 export const toGQLQuery = (obj: object, bracket: boolean): string => {

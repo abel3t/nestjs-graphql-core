@@ -6,6 +6,6 @@ import { UploadService } from './upload.service';
 @Module({
   imports: [],
   providers: [UploadService, UploadResolver],
-  exports: [],
+  exports: []
 })
 export class GraphQLUploadModule {}

@@ -1,6 +1,7 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
-import { DEFAULT_MAX_LIMIT } from 'common/constant';
+
+import { DEFAULT_MAX_LIMIT } from '../common/constant';
 
 interface IPaginationParams {
   maxLimit?: number;
@@ -32,7 +33,7 @@ export const PaginationParams = createParamDecorator(
     };
   },
   [
-    (target: any, key: string) => {
+    (target: never, key: string) => {
       ApiQuery({
         name: 'page',
         schema: { default: 1, type: 'number', minimum: 1 },

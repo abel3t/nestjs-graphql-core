@@ -4,16 +4,12 @@ import { Request } from 'express';
 
 @Injectable()
 export class GqlAdminGuard implements CanActivate {
-  public canActivate(context: ExecutionContext) {
+  public canActivate(context: ExecutionContext): boolean {
     const ctx = GqlExecutionContext.create(context);
 
     const { req }: { req: Request & { user?: any } } = ctx.getContext();
     const user = req.user;
 
-    if (user?.isAdmin) {
-      return true;
-    }
-
-    return false;
+    return !!user?.isAdmin;
   }
 }
