@@ -1,1 +1,0 @@
-# NestJs GraphQL Core
